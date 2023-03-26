@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type MlMsgCtrlResponse = object;
+
 export type MlMsgGenerateResponse = object;
 
 export type MlMsgInpaintResponse = object;
