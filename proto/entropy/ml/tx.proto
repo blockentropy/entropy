@@ -8,6 +8,7 @@ option go_package = "github.com/blockentropy/entropy/x/ml/types";
 // Msg defines the Msg service.
 service Msg {
       rpc Generate(MsgGenerate) returns (MsgGenerateResponse);
+  rpc Inpaint(MsgInpaint) returns (MsgInpaintResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -22,6 +23,20 @@ message MsgGenerate {
 }
 
 message MsgGenerateResponse {
+}
+
+message MsgInpaint {
+  string creator = 1;
+  string model = 2;
+  string image = 3;
+  string mask = 4;
+  string prompt = 5;
+  string negprompt = 6;
+  string seed = 7;
+  string machine = 8;
+}
+
+message MsgInpaintResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

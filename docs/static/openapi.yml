@@ -45090,6 +45090,8 @@ definitions:
                 }
   blockentropy.entropy.ml.MsgGenerateResponse:
     type: object
+  blockentropy.entropy.ml.MsgInpaintResponse:
+    type: object
   blockentropy.entropy.ml.Params:
     type: object
     description: Params defines the parameters for the module.

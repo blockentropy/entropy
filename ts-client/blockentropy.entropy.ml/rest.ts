@@ -11,6 +11,8 @@
 
 export type MlMsgGenerateResponse = object;
 
+export type MlMsgInpaintResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

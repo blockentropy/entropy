@@ -8,9 +8,10 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgGenerate } from "./types/entropy/ml/tx";
+import { MsgInpaint } from "./types/entropy/ml/tx";
 
 
-export { MsgGenerate };
+export { MsgGenerate, MsgInpaint };
 
 type sendMsgGenerateParams = {
   value: MsgGenerate,
@@ -18,9 +19,19 @@ type sendMsgGenerateParams = {
   memo?: string
 };
 
+type sendMsgInpaintParams = {
+  value: MsgInpaint,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgGenerateParams = {
   value: MsgGenerate,
+};
+
+type msgInpaintParams = {
+  value: MsgInpaint,
 };
 
 
@@ -55,12 +66,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgInpaint({ value, fee, memo }: sendMsgInpaintParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgInpaint: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgInpaint({ value: MsgInpaint.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgInpaint: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		
 		msgGenerate({ value }: msgGenerateParams): EncodeObject {
 			try {
 				return { typeUrl: "/blockentropy.entropy.ml.MsgGenerate", value: MsgGenerate.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgGenerate: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgInpaint({ value }: msgInpaintParams): EncodeObject {
+			try {
+				return { typeUrl: "/blockentropy.entropy.ml.MsgInpaint", value: MsgInpaint.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgInpaint: Could not create message: ' + e.message)
 			}
 		},
 		

@@ -28,6 +28,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgGenerate int = 100
 
+	opWeightMsgInpaint = "op_weight_msg_inpaint"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgInpaint int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -71,6 +75,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgGenerate,
 		mlsimulation.SimulateMsgGenerate(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgInpaint int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgInpaint, &weightMsgInpaint, nil,
+		func(_ *rand.Rand) {
+			weightMsgInpaint = defaultWeightMsgInpaint
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgInpaint,
+		mlsimulation.SimulateMsgInpaint(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

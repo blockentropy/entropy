@@ -16,6 +16,20 @@ export interface MsgGenerate {
 export interface MsgGenerateResponse {
 }
 
+export interface MsgInpaint {
+  creator: string;
+  model: string;
+  image: string;
+  mask: string;
+  prompt: string;
+  negprompt: string;
+  seed: string;
+  machine: string;
+}
+
+export interface MsgInpaintResponse {
+}
+
 function createBaseMsgGenerate(): MsgGenerate {
   return { creator: "", modality: "", model: "", prompt: "", negprompt: "", seed: "", machine: "" };
 }
@@ -158,10 +172,162 @@ export const MsgGenerateResponse = {
   },
 };
 
+function createBaseMsgInpaint(): MsgInpaint {
+  return { creator: "", model: "", image: "", mask: "", prompt: "", negprompt: "", seed: "", machine: "" };
+}
+
+export const MsgInpaint = {
+  encode(message: MsgInpaint, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.model !== "") {
+      writer.uint32(18).string(message.model);
+    }
+    if (message.image !== "") {
+      writer.uint32(26).string(message.image);
+    }
+    if (message.mask !== "") {
+      writer.uint32(34).string(message.mask);
+    }
+    if (message.prompt !== "") {
+      writer.uint32(42).string(message.prompt);
+    }
+    if (message.negprompt !== "") {
+      writer.uint32(50).string(message.negprompt);
+    }
+    if (message.seed !== "") {
+      writer.uint32(58).string(message.seed);
+    }
+    if (message.machine !== "") {
+      writer.uint32(66).string(message.machine);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgInpaint {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgInpaint();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.model = reader.string();
+          break;
+        case 3:
+          message.image = reader.string();
+          break;
+        case 4:
+          message.mask = reader.string();
+          break;
+        case 5:
+          message.prompt = reader.string();
+          break;
+        case 6:
+          message.negprompt = reader.string();
+          break;
+        case 7:
+          message.seed = reader.string();
+          break;
+        case 8:
+          message.machine = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgInpaint {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      model: isSet(object.model) ? String(object.model) : "",
+      image: isSet(object.image) ? String(object.image) : "",
+      mask: isSet(object.mask) ? String(object.mask) : "",
+      prompt: isSet(object.prompt) ? String(object.prompt) : "",
+      negprompt: isSet(object.negprompt) ? String(object.negprompt) : "",
+      seed: isSet(object.seed) ? String(object.seed) : "",
+      machine: isSet(object.machine) ? String(object.machine) : "",
+    };
+  },
+
+  toJSON(message: MsgInpaint): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.model !== undefined && (obj.model = message.model);
+    message.image !== undefined && (obj.image = message.image);
+    message.mask !== undefined && (obj.mask = message.mask);
+    message.prompt !== undefined && (obj.prompt = message.prompt);
+    message.negprompt !== undefined && (obj.negprompt = message.negprompt);
+    message.seed !== undefined && (obj.seed = message.seed);
+    message.machine !== undefined && (obj.machine = message.machine);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgInpaint>, I>>(object: I): MsgInpaint {
+    const message = createBaseMsgInpaint();
+    message.creator = object.creator ?? "";
+    message.model = object.model ?? "";
+    message.image = object.image ?? "";
+    message.mask = object.mask ?? "";
+    message.prompt = object.prompt ?? "";
+    message.negprompt = object.negprompt ?? "";
+    message.seed = object.seed ?? "";
+    message.machine = object.machine ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgInpaintResponse(): MsgInpaintResponse {
+  return {};
+}
+
+export const MsgInpaintResponse = {
+  encode(_: MsgInpaintResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgInpaintResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgInpaintResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgInpaintResponse {
+    return {};
+  },
+
+  toJSON(_: MsgInpaintResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgInpaintResponse>, I>>(_: I): MsgInpaintResponse {
+    const message = createBaseMsgInpaintResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   Generate(request: MsgGenerate): Promise<MsgGenerateResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  Inpaint(request: MsgInpaint): Promise<MsgInpaintResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -169,11 +335,18 @@ export class MsgClientImpl implements Msg {
   constructor(rpc: Rpc) {
     this.rpc = rpc;
     this.Generate = this.Generate.bind(this);
+    this.Inpaint = this.Inpaint.bind(this);
   }
   Generate(request: MsgGenerate): Promise<MsgGenerateResponse> {
     const data = MsgGenerate.encode(request).finish();
     const promise = this.rpc.request("blockentropy.entropy.ml.Msg", "Generate", data);
     return promise.then((data) => MsgGenerateResponse.decode(new _m0.Reader(data)));
+  }
+
+  Inpaint(request: MsgInpaint): Promise<MsgInpaintResponse> {
+    const data = MsgInpaint.encode(request).finish();
+    const promise = this.rpc.request("blockentropy.entropy.ml.Msg", "Inpaint", data);
+    return promise.then((data) => MsgInpaintResponse.decode(new _m0.Reader(data)));
   }
 }
 
