@@ -7,10 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgGenerate } from "./types/entropy/ml/tx";
 
 
-export {  };
+export { MsgGenerate };
 
+type sendMsgGenerateParams = {
+  value: MsgGenerate,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgGenerateParams = {
+  value: MsgGenerate,
+};
 
 
 export const registry = new Registry(msgTypes);
@@ -30,6 +41,28 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgGenerate({ value, fee, memo }: sendMsgGenerateParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgGenerate: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgGenerate({ value: MsgGenerate.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgGenerate: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgGenerate({ value }: msgGenerateParams): EncodeObject {
+			try {
+				return { typeUrl: "/blockentropy.entropy.ml.MsgGenerate", value: MsgGenerate.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgGenerate: Could not create message: ' + e.message)
+			}
+		},
 		
 	}
 };

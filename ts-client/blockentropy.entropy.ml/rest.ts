@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type MlMsgGenerateResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

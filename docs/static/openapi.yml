@@ -45088,6 +45088,8 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  blockentropy.entropy.ml.MsgGenerateResponse:
+    type: object
   blockentropy.entropy.ml.Params:
     type: object
     description: Params defines the parameters for the module.
