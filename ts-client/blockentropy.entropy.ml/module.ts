@@ -7,21 +7,28 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgGenerate } from "./types/entropy/ml/tx";
+import { MsgLanguage } from "./types/entropy/ml/tx";
 import { MsgCtrl } from "./types/entropy/ml/tx";
+import { MsgGenerate } from "./types/entropy/ml/tx";
 import { MsgInpaint } from "./types/entropy/ml/tx";
 
 
-export { MsgGenerate, MsgCtrl, MsgInpaint };
+export { MsgLanguage, MsgCtrl, MsgGenerate, MsgInpaint };
 
-type sendMsgGenerateParams = {
-  value: MsgGenerate,
+type sendMsgLanguageParams = {
+  value: MsgLanguage,
   fee?: StdFee,
   memo?: string
 };
 
 type sendMsgCtrlParams = {
   value: MsgCtrl,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgGenerateParams = {
+  value: MsgGenerate,
   fee?: StdFee,
   memo?: string
 };
@@ -33,12 +40,16 @@ type sendMsgInpaintParams = {
 };
 
 
-type msgGenerateParams = {
-  value: MsgGenerate,
+type msgLanguageParams = {
+  value: MsgLanguage,
 };
 
 type msgCtrlParams = {
   value: MsgCtrl,
+};
+
+type msgGenerateParams = {
+  value: MsgGenerate,
 };
 
 type msgInpaintParams = {
@@ -63,17 +74,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgGenerate({ value, fee, memo }: sendMsgGenerateParams): Promise<DeliverTxResponse> {
+		async sendMsgLanguage({ value, fee, memo }: sendMsgLanguageParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgGenerate: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgLanguage: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgGenerate({ value: MsgGenerate.fromPartial(value) })
+				let msg = this.msgLanguage({ value: MsgLanguage.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgGenerate: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgLanguage: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -88,6 +99,20 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgCtrl: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgGenerate({ value, fee, memo }: sendMsgGenerateParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgGenerate: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgGenerate({ value: MsgGenerate.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgGenerate: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -106,11 +131,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgGenerate({ value }: msgGenerateParams): EncodeObject {
+		msgLanguage({ value }: msgLanguageParams): EncodeObject {
 			try {
-				return { typeUrl: "/blockentropy.entropy.ml.MsgGenerate", value: MsgGenerate.fromPartial( value ) }  
+				return { typeUrl: "/blockentropy.entropy.ml.MsgLanguage", value: MsgLanguage.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgGenerate: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgLanguage: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -119,6 +144,14 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/blockentropy.entropy.ml.MsgCtrl", value: MsgCtrl.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgCtrl: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgGenerate({ value }: msgGenerateParams): EncodeObject {
+			try {
+				return { typeUrl: "/blockentropy.entropy.ml.MsgGenerate", value: MsgGenerate.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgGenerate: Could not create message: ' + e.message)
 			}
 		},
 		

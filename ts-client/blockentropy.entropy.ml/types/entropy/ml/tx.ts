@@ -44,6 +44,15 @@ export interface MsgCtrl {
 export interface MsgCtrlResponse {
 }
 
+export interface MsgLanguage {
+  creator: string;
+  model: string;
+  body: string;
+}
+
+export interface MsgLanguageResponse {
+}
+
 function createBaseMsgGenerate(): MsgGenerate {
   return { creator: "", modality: "", model: "", prompt: "", negprompt: "", seed: "", machine: "" };
 }
@@ -488,12 +497,119 @@ export const MsgCtrlResponse = {
   },
 };
 
+function createBaseMsgLanguage(): MsgLanguage {
+  return { creator: "", model: "", body: "" };
+}
+
+export const MsgLanguage = {
+  encode(message: MsgLanguage, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.model !== "") {
+      writer.uint32(18).string(message.model);
+    }
+    if (message.body !== "") {
+      writer.uint32(26).string(message.body);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgLanguage {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgLanguage();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.model = reader.string();
+          break;
+        case 3:
+          message.body = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgLanguage {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      model: isSet(object.model) ? String(object.model) : "",
+      body: isSet(object.body) ? String(object.body) : "",
+    };
+  },
+
+  toJSON(message: MsgLanguage): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.model !== undefined && (obj.model = message.model);
+    message.body !== undefined && (obj.body = message.body);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgLanguage>, I>>(object: I): MsgLanguage {
+    const message = createBaseMsgLanguage();
+    message.creator = object.creator ?? "";
+    message.model = object.model ?? "";
+    message.body = object.body ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgLanguageResponse(): MsgLanguageResponse {
+  return {};
+}
+
+export const MsgLanguageResponse = {
+  encode(_: MsgLanguageResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgLanguageResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgLanguageResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgLanguageResponse {
+    return {};
+  },
+
+  toJSON(_: MsgLanguageResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgLanguageResponse>, I>>(_: I): MsgLanguageResponse {
+    const message = createBaseMsgLanguageResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   Generate(request: MsgGenerate): Promise<MsgGenerateResponse>;
   Inpaint(request: MsgInpaint): Promise<MsgInpaintResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   Ctrl(request: MsgCtrl): Promise<MsgCtrlResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  Language(request: MsgLanguage): Promise<MsgLanguageResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -503,6 +619,7 @@ export class MsgClientImpl implements Msg {
     this.Generate = this.Generate.bind(this);
     this.Inpaint = this.Inpaint.bind(this);
     this.Ctrl = this.Ctrl.bind(this);
+    this.Language = this.Language.bind(this);
   }
   Generate(request: MsgGenerate): Promise<MsgGenerateResponse> {
     const data = MsgGenerate.encode(request).finish();
@@ -520,6 +637,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgCtrl.encode(request).finish();
     const promise = this.rpc.request("blockentropy.entropy.ml.Msg", "Ctrl", data);
     return promise.then((data) => MsgCtrlResponse.decode(new _m0.Reader(data)));
+  }
+
+  Language(request: MsgLanguage): Promise<MsgLanguageResponse> {
+    const data = MsgLanguage.encode(request).finish();
+    const promise = this.rpc.request("blockentropy.entropy.ml.Msg", "Language", data);
+    return promise.then((data) => MsgLanguageResponse.decode(new _m0.Reader(data)));
   }
 }
 

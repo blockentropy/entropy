@@ -10,6 +10,7 @@ service Msg {
       rpc Generate(MsgGenerate) returns (MsgGenerateResponse);
   rpc Inpaint(MsgInpaint) returns (MsgInpaintResponse);
   rpc Ctrl(MsgCtrl) returns (MsgCtrlResponse);
+  rpc Language(MsgLanguage) returns (MsgLanguageResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -52,6 +53,15 @@ message MsgCtrl {
 }
 
 message MsgCtrlResponse {
+}
+
+message MsgLanguage {
+  string creator = 1;
+  string model = 2;
+  string body = 3;
+}
+
+message MsgLanguageResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

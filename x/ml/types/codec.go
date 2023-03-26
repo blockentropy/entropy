@@ -11,6 +11,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgGenerate{}, "ml/Generate", nil)
 	cdc.RegisterConcrete(&MsgInpaint{}, "ml/Inpaint", nil)
 	cdc.RegisterConcrete(&MsgCtrl{}, "ml/Ctrl", nil)
+	cdc.RegisterConcrete(&MsgLanguage{}, "ml/Language", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -23,6 +24,9 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCtrl{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgLanguage{},
 	)
 	// this line is used by starport scaffolding # 3
 

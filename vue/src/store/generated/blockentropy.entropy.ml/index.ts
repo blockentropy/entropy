@@ -128,16 +128,16 @@ export default {
 		},
 		
 		
-		async sendMsgGenerate({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgLanguage({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.BlockentropyEntropyMl.tx.sendMsgGenerate({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.BlockentropyEntropyMl.tx.sendMsgLanguage({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgGenerate:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgLanguage:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgGenerate:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgLanguage:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -151,6 +151,19 @@ export default {
 					throw new Error('TxClient:MsgCtrl:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCtrl:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgGenerate({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.BlockentropyEntropyMl.tx.sendMsgGenerate({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgGenerate:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgGenerate:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -168,16 +181,16 @@ export default {
 			}
 		},
 		
-		async MsgGenerate({ rootGetters }, { value }) {
+		async MsgLanguage({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.BlockentropyEntropyMl.tx.msgGenerate({value})
+				const msg = await client.BlockentropyEntropyMl.tx.msgLanguage({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgGenerate:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgLanguage:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgGenerate:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgLanguage:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -191,6 +204,19 @@ export default {
 					throw new Error('TxClient:MsgCtrl:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCtrl:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgGenerate({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.BlockentropyEntropyMl.tx.msgGenerate({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgGenerate:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgGenerate:Create Could not create message: ' + e.message)
 				}
 			}
 		},
