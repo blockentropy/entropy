@@ -1,10 +1,12 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
 import BlockentropyEntropyEntropy from './blockentropy.entropy.entropy'
+import BlockentropyEntropyMl from './blockentropy.entropy.ml'
 
 
 export default { 
   BlockentropyEntropyEntropy: load(BlockentropyEntropyEntropy, 'blockentropy.entropy.entropy'),
+  BlockentropyEntropyMl: load(BlockentropyEntropyMl, 'blockentropy.entropy.ml'),
   
 }
 

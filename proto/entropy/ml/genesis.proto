@@ -1,0 +1,14 @@
+syntax = "proto3";
+package blockentropy.entropy.ml;
+
+import "gogoproto/gogo.proto";
+import "entropy/ml/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/blockentropy/entropy/x/ml/types";
+
+// GenesisState defines the ml module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

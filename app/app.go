@@ -107,6 +107,9 @@ import (
 	entropymodule "github.com/blockentropy/entropy/x/entropy"
 	entropymodulekeeper "github.com/blockentropy/entropy/x/entropy/keeper"
 	entropymoduletypes "github.com/blockentropy/entropy/x/entropy/types"
+	mlmodule "github.com/blockentropy/entropy/x/ml"
+	mlmodulekeeper "github.com/blockentropy/entropy/x/ml/keeper"
+	mlmoduletypes "github.com/blockentropy/entropy/x/ml/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/blockentropy/entropy/app/params"
@@ -166,6 +169,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		entropymodule.AppModuleBasic{},
+		mlmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -179,6 +183,7 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		mlmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -240,6 +245,8 @@ type App struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
 	EntropyKeeper entropymodulekeeper.Keeper
+
+	MlKeeper mlmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -285,6 +292,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		entropymoduletypes.StoreKey,
+		mlmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -510,6 +518,17 @@ func New(
 	)
 	entropyModule := entropymodule.NewAppModule(appCodec, app.EntropyKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.MlKeeper = *mlmodulekeeper.NewKeeper(
+		appCodec,
+		keys[mlmoduletypes.StoreKey],
+		keys[mlmoduletypes.MemStoreKey],
+		app.GetSubspace(mlmoduletypes.ModuleName),
+
+		app.StakingKeeper,
+		app.BankKeeper,
+	)
+	mlModule := mlmodule.NewAppModule(appCodec, app.MlKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Sealing prevents other modules from creating scoped sub-keepers
@@ -556,6 +575,7 @@ func New(
 		transferModule,
 		icaModule,
 		entropyModule,
+		mlModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -586,6 +606,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		entropymoduletypes.ModuleName,
+		mlmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -611,6 +632,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		entropymoduletypes.ModuleName,
+		mlmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -641,6 +663,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		entropymoduletypes.ModuleName,
+		mlmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -671,6 +694,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		entropyModule,
+		mlModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -870,6 +894,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(entropymoduletypes.ModuleName)
+	paramsKeeper.Subspace(mlmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
