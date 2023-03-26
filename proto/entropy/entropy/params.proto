@@ -1,0 +1,12 @@
+syntax = "proto3";
+package blockentropy.entropy.entropy;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/blockentropy/entropy/x/entropy/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
